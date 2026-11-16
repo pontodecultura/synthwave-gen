@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100d20">
+  <title>NEON DRIVE — Synthwave Studio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <div class="brand-mark"><span class="brand-icon">N</span><div><strong>NEON<span>//</span>DRIVE</strong><small>SYNTHWAVE COMPOSITION LAB</small></div></div>
+    <div class="topbar-right"><span class="engine-indicator"><i></i> WEB AUDIO SYNTH ENGINE</span><span class="version">v1.0</span></div>
+  </header>
+
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">RETRO FUTURE · ANALOG-INSPIRED SYNTHESIS</p>
+        <h1>Compose your<br><span>Neon Dreams.</span></h1>
+        <p class="hero-description">Crie faixas Synthwave com três osciladores por voz, sequências harmônicas controladas e efeitos espaciais. Sem SoundFont obrigatório.</p>
+        <div class="hero-tags"><span>3 OSCILLATORS</span><span>8-PART SONG FORM</span><span>MIDI + WAV</span></div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="sun"></div><div class="sun-line"></div><div class="mountain mountain-one"></div><div class="mountain mountain-two"></div>
+        <div class="grid-floor"></div><div class="visual-label">NIGHT<br>DRIVE</div>
+      </div>
+    </section>
+
+    <section class="transport panel">
+      <div class="transport-main">
+        <button id="playButton" class="play-button"><span id="playIcon">▶</span><span id="playLabel">PLAY COMPOSITION</span></button>
+        <button id="stopButton" class="icon-button" disabled aria-label="Parar reprodução">■</button>
+        <button id="generateButton" class="secondary-button">↻ GENERATE</button>
+      </div>
+      <div class="transport-status">
+        <div class="status-line"><span id="statusText">Pronto para gerar sua composição.</span><span id="timeText">00:00 / 00:00</span></div>
+        <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      </div>
+      <div class="transport-meta"><span id="tempoBadge">104 BPM</span><span id="keyBadge">A MINOR</span></div>
+    </section>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <section class="panel control-panel">
+          <div class="section-heading"><div><p class="eyebrow">01 / COMPOSITION</p><h2>Music DNA</h2></div><span class="section-number">01</span></div>
+          <div class="field"><label for="keySelect">TONALIDADE</label><select id="keySelect"><option value="0">C / Dó</option><option value="1">C♯ / Dó♯</option><option value="2">D / Ré</option><option value="3">D♯ / Ré♯</option><option value="4">E / Mi</option><option value="5">F / Fá</option><option value="6">F♯ / Fá♯</option><option value="7">G / Sol</option><option value="8">G♯ / Sol♯</option><option value="9" selected>A / Lá</option><option value="10">A♯ / Lá♯</option><option value="11">B / Si</option></select></div>
+          <div class="field"><label for="modeSelect">MODO</label><select id="modeSelect"><option value="minor" selected>Minor · Nostálgico</option><option value="major">Major · Cinemático</option></select></div>
+          <div class="field"><div class="range-head"><label for="bpmRange">TEMPO</label><output id="bpmValue">104 BPM</output></div><input id="bpmRange" type="range" min="80" max="128" value="104" step="1"></div>
+          <div class="field"><label for="barsSelect">FORMA MUSICAL</label><select id="barsSelect"><option value="32">Estrutura compacta · 32 compassos</option><option value="52" selected>Estrutura completa · 52 compassos</option><option value="64">Estrutura estendida · 64 compassos</option></select></div>
+          <div class="field"><label for="grooveSelect">GROOVE</label><select id="grooveSelect"><option value="classic">Classic Drive</option><option value="driving" selected>Night Highway</option><option value="half">Half-Time Cinema</option></select></div>
+          <div class="field"><label for="densitySelect">DENSIDADE MELÓDICA</label><select id="densitySelect"><option value="sparse">Minimal · espaço</option><option value="balanced" selected>Balanced · natural</option><option value="dense">Energetic · mais notas</option></select></div>
+          <div class="field"><div class="range-head"><label for="seedInput">SEED ALEATÓRIA</label><button id="randomSeedButton" class="text-button" type="button">ALEATÓRIA</button></div><input id="seedInput" type="number" value="20261116" min="1" max="4294967295"></div>
+          <div class="field"><label>CAMADAS</label><div class="layer-toggles">
+            <label><input id="layerLead" type="checkbox" checked><span>Lead</span></label>
+            <label><input id="layerBass" type="checkbox" checked><span>Bass</span></label>
+            <label><input id="layerPad" type="checkbox" checked><span>Pad</span></label>
+            <label><input id="layerArp" type="checkbox" checked><span>Arpeggio</span></label>
+            <label><input id="layerDrums" type="checkbox" checked><span>Drums</span></label>
+          </div></div>
+        </section>
+
+        <section class="panel control-panel export-panel">
+          <div class="section-heading"><div><p class="eyebrow">05 / OUTPUT</p><h2>Export</h2></div><span class="section-number">05</span></div>
+          <button id="exportWavButton" class="export-button primary-export" disabled><span>RENDER WAV</span><b>↓</b></button>
+          <button id="exportMidiButton" class="export-button" disabled><span>EXPORT MIDI</span><b>↓</b></button>
+          <p class="small-note">WAV estéreo · 48 kHz · PCM 16-bit<br>MIDI Type 1 · pistas separadas</p>
+          <div class="sf2-note"><strong>SoundFont (SF2)</strong><p>Não é necessário para tocar nem exportar WAV. O sintetizador nativo cria o áudio pelos osciladores. O MIDI exportado pode ser aberto em uma DAW com um SF2 opcional.</p></div>
+        </section>
+      </aside>
+
+      <div class="main-column">
+        <section class="panel synth-panel">
+          <div class="section-heading"><div><p class="eyebrow">02 / SOUND DESIGN</p><h2>Triple Oscillator</h2></div><span class="section-number">02</span></div>
+          <p class="section-intro">Cada nota utiliza três osciladores independentes, somados e processados pelo filtro e pelo envelope.</p>
+          <div class="oscillator-grid">
+            <article class="osc-card osc-one"><div class="osc-head"><span class="osc-index">OSC 01</span><strong>CORE</strong><span class="osc-led"></span></div><div class="wave-preview wave-saw"></div><div class="field"><label for="osc1Wave">WAVEFORM</label><select id="osc1Wave"><option value="sawtooth" selected>Sawtooth</option><option value="square">Square</option><option value="triangle">Triangle</option><option value="sine">Sine</option></select></div><div class="field"><div class="range-head"><label for="osc1Mix">MIX</label><output id="osc1MixValue">65%</output></div><input id="osc1Mix" type="range" min="0" max="100" value="65"></div><div class="field compact-row"><div><label for="osc1Oct">OCTAVE</label><select id="osc1Oct"><option value="-1">-1</option><option value="0" selected>0</option><option value="1">+1</option></select></div><div><label for="osc1Tune">DETUNE</label><input id="osc1Tune" type="number" min="-50" max="50" value="0"></div></div></article>
+            <article class="osc-card osc-two"><div class="osc-head"><span class="osc-index">OSC 02</span><strong>BODY</strong><span class="osc-led"></span></div><div class="wave-preview wave-square"></div><div class="field"><label for="osc2Wave">WAVEFORM</label><select id="osc2Wave"><option value="sawtooth">Sawtooth</option><option value="square" selected>Square</option><option value="triangle">Triangle</option><option value="sine">Sine</option></select></div><div class="field"><div class="range-head"><label for="osc2Mix">MIX</label><output id="osc2MixValue">45%</output></div><input id="osc2Mix" type="range" min="0" max="100" value="45"></div><div class="field compact-row"><div><label for="osc2Oct">OCTAVE</label><select id="osc2Oct"><option value="-1">-1</option><option value="0" selected>0</option><option value="1">+1</option></select></div><div><label for="osc2Tune">DETUNE</label><input id="osc2Tune" type="number" min="-50" max="50" value="-9"></div></div></article>
+            <article class="osc-card osc-three"><div class="osc-head"><span class="osc-index">OSC 03</span><strong>AIR</strong><span class="osc-led"></span></div><div class="wave-preview wave-triangle"></div><div class="field"><label for="osc3Wave">WAVEFORM</label><select id="osc3Wave"><option value="sawtooth">Sawtooth</option><option value="square">Square</option><option value="triangle" selected>Triangle</option><option value="sine">Sine</option></select></div><div class="field"><div class="range-head"><label for="osc3Mix">MIX</label><output id="osc3MixValue">25%</output></div><input id="osc3Mix" type="range" min="0" max="100" value="25"></div><div class="field compact-row"><div><label for="osc3Oct">OCTAVE</label><select id="osc3Oct"><option value="-1" selected>-1</option><option value="0">0</option><option value="1">+1</option></select></div><div><label for="osc3Tune">DETUNE</label><input id="osc3Tune" type="number" min="-50" max="50" value="7"></div></div></article>
+          </div>
+          <div class="global-voice-row"><div class="field"><div class="range-head"><label for="masterVolume">MASTER LEVEL</label><output id="masterVolumeValue">78%</output></div><input id="masterVolume" type="range" min="0" max="100" value="78"></div><div class="field"><div class="range-head"><label for="filterCutoff">FILTER CUTOFF</label><output id="filterCutoffValue">5.2 kHz</output></div><input id="filterCutoff" type="range" min="250" max="12000" value="5200" step="50"></div><div class="field"><div class="range-head"><label for="filterResonance">RESONANCE</label><output id="filterResonanceValue">18%</output></div><input id="filterResonance" type="range" min="0" max="100" value="18"></div></div>
+        </section>
+
+        <section class="panel envelope-panel">
+          <div class="section-heading"><div><p class="eyebrow">03 / MODULATION</p><h2>Envelope & Movement</h2></div><span class="section-number">03</span></div>
+          <div class="envelope-grid">
+            <div class="field"><div class="range-head"><label for="attackRange">ATTACK</label><output id="attackValue">80 ms</output></div><input id="attackRange" type="range" min="5" max="1200" value="80" step="5"></div>
+            <div class="field"><div class="range-head"><label for="decayRange">DECAY</label><output id="decayValue">420 ms</output></div><input id="decayRange" type="range" min="30" max="1800" value="420" step="10"></div>
+            <div class="field"><div class="range-head"><label for="sustainRange">SUSTAIN</label><output id="sustainValue">64%</output></div><input id="sustainRange" type="range" min="0" max="100" value="64"></div>
+            <div class="field"><div class="range-head"><label for="releaseRange">RELEASE</label><output id="releaseValue">650 ms</output></div><input id="releaseRange" type="range" min="50" max="3000" value="650" step="10"></div>
+          </div>
+          <div class="modulation-grid"><div class="field"><div class="range-head"><label for="lfoRate">FILTER LFO RATE</label><output id="lfoRateValue">0.35 Hz</output></div><input id="lfoRate" type="range" min="0" max="8" value="0.35" step="0.05"></div><div class="field"><div class="range-head"><label for="lfoDepth">LFO DEPTH</label><output id="lfoDepthValue">12%</output></div><input id="lfoDepth" type="range" min="0" max="100" value="12"></div><div class="field"><div class="range-head"><label for="portamento">PORTAMENTO</label><output id="portamentoValue">0 ms</output></div><input id="portamento" type="range" min="0" max="250" value="0" step="5"></div></div>
+        </section>
+
+        <section class="panel effects-panel">
+          <div class="section-heading"><div><p class="eyebrow">04 / SPACE & TEXTURE</p><h2>Effects Rack</h2></div><span class="section-number">04</span></div>
+          <div class="effects-grid">
+            <div class="effect-card"><div class="effect-title"><span class="effect-icon">≋</span><strong>CHORUS</strong><label class="switch"><input id="chorusOn" type="checkbox" checked><span></span></label></div><div class="field"><div class="range-head"><label for="chorusMix">DEPTH / MIX</label><output id="chorusMixValue">24%</output></div><input id="chorusMix" type="range" min="0" max="70" value="24"></div></div>
+            <div class="effect-card"><div class="effect-title"><span class="effect-icon">↝</span><strong>STEREO DELAY</strong><label class="switch"><input id="delayOn" type="checkbox" checked><span></span></label></div><div class="field"><div class="range-head"><label for="delayMix">WET</label><output id="delayMixValue">22%</output></div><input id="delayMix" type="range" min="0" max="65" value="22"></div><div class="field"><div class="range-head"><label for="delayTime">TIME</label><output id="delayTimeValue">380 ms</output></div><input id="delayTime" type="range" min="80" max="850" value="380" step="10"></div></div>
+            <div class="effect-card"><div class="effect-title"><span class="effect-icon">◌</span><strong>REVERB</strong><label class="switch"><input id="reverbOn" type="checkbox" checked><span></span></label></div><div class="field"><div class="range-head"><label for="reverbMix">WET</label><output id="reverbMixValue">20%</output></div><input id="reverbMix" type="range" min="0" max="65" value="20"></div><div class="field"><div class="range-head"><label for="reverbSize">DECAY</label><output id="reverbSizeValue">2.8 s</output></div><input id="reverbSize" type="range" min="0.5" max="6" value="2.8" step="0.1"></div></div>
+            <div class="effect-card"><div class="effect-title"><span class="effect-icon">⌁</span><strong>ANALOG DRIVE</strong><label class="switch"><input id="driveOn" type="checkbox"><span></span></label></div><div class="field"><div class="range-head"><label for="driveAmount">SATURATION</label><output id="driveAmountValue">12%</output></div><input id="driveAmount" type="range" min="0" max="75" value="12"></div></div>
+          </div>
+        </section>
+
+        <section class="panel arrangement-panel">
+          <div class="section-heading"><div><p class="eyebrow">06 / ARRANGEMENT</p><h2>Song Structure & Harmony</h2></div><span class="section-number">06</span></div>
+          <div class="arrangement-meta"><span id="compositionName">MIDNIGHT DRIVE</span><span id="compositionInfo">A MINOR · 104 BPM · 52 BARS · 8 PARTS</span></div>
+          <div id="sectionTimeline" class="section-timeline"><div class="empty-state">A estrutura musical aparecerá aqui após gerar a composição.</div></div><div class="chord-grid" id="chordGrid"><div class="empty-state">A sequência de acordes aparecerá aqui.</div></div>
+          <div class="track-summary" id="trackSummary">Nenhuma composição gerada.</div>
+        </section>
+      </div>
+    </div>
+    <footer class="footer"><span>NEON//DRIVE SYNTHWAVE STUDIO</span><span>Original procedural music · no samples required</span></footer>
+  </main>
+
+  <script src="js/music-generator.js"></script>
+  <script src="js/audio-engine.js"></script>
+  <script src="js/midi-export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

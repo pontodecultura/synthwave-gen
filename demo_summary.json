@@ -1,0 +1,57 @@
+{
+  "title": "Midnight Drive",
+  "options": {
+    "key": 9,
+    "mode": "minor",
+    "bpm": 104,
+    "bars": 16,
+    "density": "balanced",
+    "groove": "driving",
+    "seed": 20261116,
+    "lead": true,
+    "bass": true,
+    "pad": true,
+    "arp": true,
+    "drums": true
+  },
+  "chords": [
+    "Am7",
+    "Fmaj7",
+    "Cmaj7",
+    "G7",
+    "Am7",
+    "Fmaj7",
+    "Cmaj7",
+    "G7",
+    "Am7",
+    "Fmaj7",
+    "Cmaj7",
+    "G7",
+    "Am7",
+    "Fmaj7",
+    "Cmaj7",
+    "Am7"
+  ],
+  "tracks": [
+    {
+      "name": "Neon Lead",
+      "notes": 48
+    },
+    {
+      "name": "Analog Bass",
+      "notes": 64
+    },
+    {
+      "name": "Wide Dream Pad",
+      "notes": 64
+    },
+    {
+      "name": "Clockwork Arpeggio",
+      "notes": 128
+    },
+    {
+      "name": "Electronic Drums",
+      "notes": 193
+    }
+  ]
+}

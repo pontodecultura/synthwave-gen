@@ -1,0 +1,22 @@
+{
+  "project": "NEON//DRIVE Synthwave Studio",
+  "composition": "Midnight Drive",
+  "key": "A minor",
+  "tempo_bpm": 104,
+  "meter": "4/4",
+  "total_bars": 52,
+  "sections": [
+    {"name": "Introdução", "start_bar": 1, "end_bar": 4, "bars": 4},
+    {"name": "Desenvolvimento 1", "start_bar": 5, "end_bar": 12, "bars": 8},
+    {"name": "Refrão", "start_bar": 13, "end_bar": 20, "bars": 8},
+    {"name": "Desenvolvimento 2", "start_bar": 21, "end_bar": 28, "bars": 8},
+    {"name": "Refrão", "start_bar": 29, "end_bar": 36, "bars": 8},
+    {"name": "Ponte", "start_bar": 37, "end_bar": 40, "bars": 4},
+    {"name": "Refrão final", "start_bar": 41, "end_bar": 48, "bars": 8},
+    {"name": "Fade Out + End", "start_bar": 49, "end_bar": 52, "bars": 4}
+  ],
+  "tracks": ["Neon Lead", "Analog Bass", "Wide Dream Pad", "Clockwork Arpeggio", "Electronic Drums"],
+  "midi_type": 1,
+  "midi_ppq": 480,
+  "fade_out": "Master bus on WAV/audio playback; CC7 and CC11 automation plus section markers in MIDI"
+}
