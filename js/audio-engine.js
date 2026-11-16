@@ -204,7 +204,7 @@
     pan.connect(graph.chorusSend);
 
     const stopNodes = oscillators.slice();
-    voiceRegistry.push({ gain: amp.gain, nodes: stopNodes, start: when });
+    voiceRegistry.push({ gain: amp.gain, nodes: stopNodes, start: when, end: envInfo.end + 0.08 });
   }
 
   function makeNoiseBuffer(ctx, seconds) {
@@ -255,7 +255,7 @@
       source.connect(filter); filter.connect(gain); gain.connect(out);
       source.start(when); source.stop(when + duration + 0.04); sources.push(source);
     }
-    voiceRegistry.push({ gain: out.gain, nodes: sources, start: when });
+    voiceRegistry.push({ gain: out.gain, nodes: sources, start: when, end: when + 1.7 });
   }
 
   function scheduleComposition(ctx, composition, settings, graph, startAt, voiceRegistry) {
@@ -316,10 +316,14 @@
       this.graph = null;
       this.voices = [];
       this.endTimer = null;
+      this.schedulerTimer = null;
       this.startedAt = 0;
       this.expectedDuration = 0;
       this.isPlaying = false;
       this.onEnded = null;
+      this.eventQueue = [];
+      this.nextEventIndex = 0;
+      this.lookAheadSeconds = 0.18;
     }
 
     async ensureContext() {
@@ -329,31 +333,102 @@
         this.context = new Ctx({ latencyHint: 'interactive' });
         this.graph = null;
       }
-      if (this.context.state === 'suspended') await this.context.resume();
+      if (this.context.state !== 'running') {
+        try { await this.context.resume(); }
+        catch (error) { throw new Error(`O navegador bloqueou a inicialização do áudio: ${error?.message || error}`); }
+      }
+      if (this.context.state !== 'running') {
+        throw new Error(`O AudioContext continua em estado "${this.context.state}". Clique novamente em Play e verifique se o site não está bloqueado para áudio.`);
+      }
       return this.context;
     }
 
+    buildEventQueue(composition) {
+      const queue = [];
+      for (const track of composition.tracks) {
+        for (const event of track.notes) {
+          const beat = Number(event.startBeat);
+          if (!Number.isFinite(beat) || !Number.isFinite(Number(event.pitch))) continue;
+          queue.push({ track, event, beat });
+        }
+      }
+      queue.sort((a, b) => a.beat - b.beat || (a.track.id === 'drums' ? -1 : 1));
+      return queue;
+    }
+
+    scheduleWindow() {
+      const ctx = this.context;
+      if (!ctx || !this.graph || !this.isPlaying) return;
+      const beatSeconds = 60 / this.currentComposition.options.bpm;
+      const horizon = ctx.currentTime + this.lookAheadSeconds;
+      const now = ctx.currentTime;
+
+      // Release completed voices periodically so long arrangements do not retain
+      // thousands of AudioNode references for the entire song.
+      if (this.voices.length > 80) this.voices = this.voices.filter(voice => voice.end > now - 0.08);
+
+      while (this.nextEventIndex < this.eventQueue.length) {
+        const item = this.eventQueue[this.nextEventIndex];
+        const targetWhen = this.startedAt + item.beat * beatSeconds;
+        if (targetWhen > horizon) break;
+        this.nextEventIndex += 1;
+        // If the browser was briefly busy, play a late event immediately instead
+        // of passing an invalid time in the past to an AudioScheduledSourceNode.
+        const when = Math.max(targetWhen, now + 0.006);
+        if (item.track.kind === 'drums') {
+          addDrum(ctx, item.event, when, this.graph, this.voices);
+        } else {
+          addSynthVoice(ctx, item.event, when, beatSeconds, this.currentSettings, this.graph, item.track.id, this.voices);
+        }
+      }
+    }
+
     async play(composition, onEnded) {
-      this.stop();
+      this.stop(false);
       const ctx = await this.ensureContext();
-      if (this.graph) cleanupGraph(this.graph);
       const settings = audioSettingsFromControls();
       this.graph = buildGraph(ctx, settings);
-      const startAt = ctx.currentTime + 0.12;
-      scheduleArrangementFade(composition, this.graph, startAt, composition.options.bpm);
-      this.startedAt = startAt;
+      this.currentComposition = composition;
+      this.currentSettings = settings;
+      this.eventQueue = this.buildEventQueue(composition);
+      this.nextEventIndex = 0;
+      this.startedAt = ctx.currentTime + 0.12;
       this.expectedDuration = composition.durationSeconds + 5.2;
       this.onEnded = onEnded || null;
       this.voices = [];
-      scheduleComposition(ctx, composition, settings, this.graph, startAt, this.voices);
       this.isPlaying = true;
+
+      scheduleArrangementFade(composition, this.graph, this.startedAt, composition.options.bpm);
+      // Schedule only a short look-ahead window; do not instantiate every note
+      // and oscillator in a 32–64 bar song at once.
+      this.scheduleWindow();
+      this.schedulerTimer = window.setInterval(() => this.scheduleWindow(), 25);
       this.endTimer = window.setTimeout(() => this.stop(true), this.expectedDuration * 1000);
-      return { startAt, duration: this.expectedDuration };
+      return { startAt: this.startedAt, duration: this.expectedDuration, scheduledEvents: this.eventQueue.length };
+    }
+
+    async testAudio() {
+      this.stop(false);
+      const ctx = await this.ensureContext();
+      const settings = audioSettingsFromControls();
+      this.graph = buildGraph(ctx, settings);
+      this.voices = [];
+      this.isPlaying = true;
+      this.onEnded = null;
+      const beatSeconds = 0.6;
+      const when = ctx.currentTime + 0.06;
+      addSynthVoice(ctx, { pitch: 60, velocity: 104, pan: 0, durationBeats: 2 }, when,
+        beatSeconds, settings, this.graph, 'lead', this.voices);
+      await new Promise(resolve => { this.endTimer = window.setTimeout(resolve, 1750); });
+      this.stop(false);
+      return { state: ctx.state };
     }
 
     stop(natural) {
       if (this.endTimer) window.clearTimeout(this.endTimer);
+      if (this.schedulerTimer) window.clearInterval(this.schedulerTimer);
       this.endTimer = null;
+      this.schedulerTimer = null;
       if (this.context && this.isPlaying) {
         const now = this.context.currentTime;
         this.voices.forEach(voice => {
@@ -367,6 +442,8 @@
       const wasPlaying = this.isPlaying;
       this.isPlaying = false;
       this.voices = [];
+      this.eventQueue = [];
+      this.nextEventIndex = 0;
       if (this.graph) {
         cleanupGraph(this.graph);
         this.graph = null;

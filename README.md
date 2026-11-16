@@ -1,6 +1,6 @@
 # NEON//DRIVE — Synthwave Studio
 
-Aplicativo independente para compor instrumentais Synthwave procedurais. Não depende de SoundFont, SpessaSynth, Node.js, Python ou bibliotecas externas para produzir áudio. O Python 3 é utilizado apenas pelo inicializador opcional para servir os arquivos localmente.
+Aplicativo independente para compor instrumentais Synthwave procedurais. Não depende de SoundFont, SpessaSynth, Node.js, Python ou bibliotecas externas para produzir áudio. O Python 3 é utilizado apenas pelo inicializador opcional para servir os arquivos localmente. Esta versão usa a porta 8767 para não reutilizar acidentalmente um servidor antigo em 8765. A reprodução utiliza agendamento incremental com janela de 180 ms, para não criar todas as vozes de uma composição longa de uma só vez.
 
 ## Estrutura musical automática
 
@@ -35,8 +35,8 @@ O Fade Out é aplicado no áudio durante a reprodução e na renderização WAV,
 
 1. Extraia a pasta do projeto.
 2. Dê duplo clique em `iniciar.bat`.
-3. O navegador abrirá `http://127.0.0.1:8765`.
-4. Clique em **Generate** para criar a composição e em **Play Composition** para ouvir.
+3. O navegador abrirá `http://127.0.0.1:8767`.
+4. Clique em **Generate** para criar a composição. Use **Test Audio** para verificar a saída do sintetizador com uma nota C4; depois clique em **Play Composition** para ouvir o arranjo completo.
 
 ## Abrir manualmente
 

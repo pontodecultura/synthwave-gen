@@ -198,6 +198,17 @@
     });
     $('generateButton').addEventListener('click', generateComposition);
     $('playButton').addEventListener('click', playComposition);
+    $('testAudioButton').addEventListener('click', async () => {
+      const button = $('testAudioButton');
+      button.disabled = true;
+      try {
+        setStatus('Testando a saída de áudio com uma nota C4...');
+        const result = await SynthwaveAudioEngine.testAudio();
+        setStatus(`Nota de teste enviada · AudioContext: ${result.state}.`, 'success');
+      } catch (error) {
+        setStatus(`Falha no teste de áudio: ${error?.message || error}`, 'error');
+      } finally { button.disabled = false; }
+    });
     $('stopButton').addEventListener('click', () => stopPlayback());
     $('exportMidiButton').addEventListener('click', exportMidi);
     $('exportWavButton').addEventListener('click', exportWav);
